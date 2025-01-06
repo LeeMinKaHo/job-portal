@@ -16,4 +16,9 @@ export class job_posting {
   job_description: string;
   @Column({type:"text", nullable:false})
   application_deadline: string;
+
+  @Column({type:"boolean", nullable:false})
+  is_Hidden:boolean
+  @Column({type:"boolean", nullable:false})
+  gender : boolean
 }

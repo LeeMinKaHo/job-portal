@@ -1,5 +1,5 @@
 
-import { job_posting } from 'src/database/entities/job_posting';
+import { job_posting } from './src/database/entities/job_posting';
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
