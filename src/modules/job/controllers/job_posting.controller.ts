@@ -11,10 +11,10 @@ import {
   Post,
 } from '@nestjs/common';
 
-import { job_posting_service } from '../services/job_posting_service';
-import { job_posting } from 'src/database/entities/job_posting';
-import { create_job_posting_dto } from '../dtos/create_job-posting_dto';
-import { update_job_posting_dto } from '../dtos/update_job-posting_dto';
+import { job_posting_service } from '../services/job.service';
+import { job } from 'src/database/entities/job.entity';
+import { create_job } from '../dtos/create_job.dto';
+import { update_job } from '../dtos/update_job.dto';
 import { DeleteResult } from 'typeorm';
 
 @Controller('job_posting')
@@ -24,21 +24,21 @@ export class job_posting_controller {
   constructor(private readonly job_posting_service: job_posting_service) {}
 
   @Get()
-  async findAll(): Promise<job_posting[]> {
+  async findAll(): Promise<job[]> {
     // Call the service's findAll method
     console.log(this.job_posting_service);
     return await this.job_posting_service.findAll();
   }
   @Post()
   async create(
-    @Body() create_job_posting_dto: create_job_posting_dto,
-  ): Promise<job_posting> {
+    @Body() create_job_posting_dto: create_job,
+  ): Promise<job> {
     return await this.job_posting_service.create(create_job_posting_dto);
   }
   @Patch()
   async update(
-    @Body() update_job_posting_dto: update_job_posting_dto,
-  ): Promise<job_posting | null> {
+    @Body() update_job_posting_dto: update_job,
+  ): Promise<job | null> {
     const result = await this.job_posting_service.update(
       update_job_posting_dto,
     );

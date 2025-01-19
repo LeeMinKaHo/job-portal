@@ -1,6 +1,6 @@
 import { IsDate, IsNegative, IsNotEmpty, IsNumber, IsPositive, IsString } from "class-validator"
 
-export class create_job_posting_dto{
+export class create_job{
     @IsString()
     @IsNotEmpty()
     title:string
