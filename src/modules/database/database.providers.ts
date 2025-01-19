@@ -1,5 +1,7 @@
 
-import { job_posting } from './src/database/entities/job_posting';
+
+import { company } from 'src/database/entities/company.entity';
+import { job } from 'src/database/entities/job.entity';
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
@@ -9,9 +11,9 @@ export const AppDataSource = new DataSource({
     username: 'root',
     password: 'LeKhoa@123',
     database: 'job_portal',
-    entities: [job_posting],
+    entities: ['dist/database/entities/*.js'], // Adjust as per environment
     logging: true,
-    migrations: ["dist/src/database/migrations/*.js"],
+    migrations: ["dist/database/migrations/*.js"],
     synchronize: false, // Nên đặt `false` trong môi trường production
   });
   

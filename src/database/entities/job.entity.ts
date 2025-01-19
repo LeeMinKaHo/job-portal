@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class job_posting {
+@Entity("jobs")
+export class job {
   @PrimaryGeneratedColumn()
   id: number;
   @Column({nullable:false,type:"varchar"})
@@ -16,9 +16,10 @@ export class job_posting {
   job_description: string;
   @Column({type:"text", nullable:false})
   application_deadline: string;
-
   @Column({type:"boolean", nullable:false})
   is_Hidden:boolean
   @Column({type:"boolean", nullable:false})
   gender : boolean
+  @Column({type:"int" , nullable:false})
+  company_id:number
 }

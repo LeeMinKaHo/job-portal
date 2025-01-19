@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsNumber, IsPositive, IsDate } from "class-validator"
 
-export class update_job_posting_dto{
+export class update_job{
     id : number
 
      @IsString()
