@@ -1,3 +1,4 @@
+import { Role } from "src/modules/auth/enum/role.enum";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("users")
@@ -11,5 +12,5 @@ export class user{
     @Column()
     active:boolean
     @Column()
-    role:string
+    role:Role
 }
