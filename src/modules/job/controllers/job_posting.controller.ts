@@ -9,30 +9,42 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
-import { job_posting_service } from '../services/job.service';
+import { jobService } from '../services/job.service';
 import { job } from 'src/database/entities/job.entity';
 import { create_job } from '../dtos/create_job.dto';
 import { update_job } from '../dtos/update_job.dto';
-import { DeleteResult } from 'typeorm';
 
-@Controller('job_posting')
-export class job_posting_controller {
+import { Roles } from 'src/modules/auth/decorator/role.decorator';
+
+import { RolesGuard } from 'src/modules/auth/guards/role.guard';
+import { Role } from 'src/modules/auth/enum/role.enum';
+import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
+
+@Controller('jobs')
+export class jobController {
   // Correct token name
   // Inject the service into the controller's constructor
-  constructor(private readonly job_posting_service: job_posting_service) {}
+  constructor(private readonly job_posting_service: jobService) {}
 
   @Get()
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard,RolesGuard)
   async findAll(): Promise<job[]> {
     // Call the service's findAll method
     console.log(this.job_posting_service);
     return await this.job_posting_service.findAll();
   }
+
+  @UseGuards(RolesGuard)
+ 
   @Post()
   async create(
     @Body() create_job_posting_dto: create_job,
   ): Promise<job> {
+    
     return await this.job_posting_service.create(create_job_posting_dto);
   }
   @Patch()

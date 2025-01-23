@@ -1,3 +1,4 @@
+import { Type } from "class-transformer"
 import { IsDate, IsNegative, IsNotEmpty, IsNumber, IsPositive, IsString } from "class-validator"
 
 export class create_job{
@@ -21,6 +22,7 @@ export class create_job{
     job_description:string
     
     @IsDate()
+    @Type(() => Date)
     @IsNotEmpty()
-    application_deadline:string
+    application_deadline:Date
 }

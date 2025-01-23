@@ -6,7 +6,7 @@ import { update_job } from "../dtos/update_job.dto";
 
 
 @Injectable()
-export class job_posting_service {
+export class jobService {
   constructor(
     @Inject('JOB_POSTING_REPOSITORY')
     private job_posting_repository: Repository<job>,
