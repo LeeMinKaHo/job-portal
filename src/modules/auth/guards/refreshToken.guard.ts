@@ -10,7 +10,7 @@ import {
   import * as dotenv from 'dotenv';
   dotenv.config();
   @Injectable()
-  export class AuthGuard implements CanActivate {
+  export class RefreshTokenGuard implements CanActivate {
     constructor(private jwtService: JwtService) {}
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest();
@@ -24,7 +24,7 @@ import {
         const payload = await this.jwtService.verifyAsync(
           token,
           {
-            secret: process.env.ACCESS_SECRET_KEY
+            secret: process.env.REFESH_SECRET_KEY 
           }
         );
         

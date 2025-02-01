@@ -1,7 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Application } from './application.entity';
+import { Company } from './company.entity';
 
 @Entity("jobs")
-export class job {
+export class Job {
   @PrimaryGeneratedColumn()
   id: number;
   @Column({nullable:false,type:"varchar"})
@@ -22,4 +24,12 @@ export class job {
   gender : boolean
   @Column({type:"int" , nullable:false})
   company_id:number
+
+
+  @OneToMany(() => Application ,(application) => application.job)
+  applications : Application[]
+
+  @ManyToOne(() => Company ,(company) => company.jobs)
+  @JoinColumn({ name: "company_id" })
+  company:Company
 }

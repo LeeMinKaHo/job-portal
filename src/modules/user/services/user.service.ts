@@ -1,41 +1,53 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { user } from "src/database/entities/user.entity";
+import { User } from "src/database/entities/user.entity";
 import { Repository } from "typeorm";
-import { createUser } from "../dto/create_user.dto";
+import { CreateUser } from "../dto/create_user.dto";
 import * as bcrypt from 'bcrypt';
+import { Role } from "src/modules/auth/enum/role.enum";
+import { InjectRepository } from "@nestjs/typeorm";
+import { UpdateUserDto } from "../dto/update-user.dto";
 @Injectable()
-export class user_service {
+export class UserService {
     constructor(
-         @Inject("USER_REPOSITORY")
-        private user_repository : Repository<user>
+        @InjectRepository(User)
+        private usersRepository : Repository<User>
     ){}
 
-    async find_one_by_id(id:number) : Promise<user>{
-        const user = await this.user_repository.findOneBy({id})
+    async findOneById(id:number) : Promise<User>{
+        const user = await this.usersRepository.findOneBy({id})
         if (!user) {
             throw new NotFoundException(`User with id ${id} not found`);
         }
         return user;
     }
-    async find_one_by_mail(gmail:string) : Promise<user>{
-        const user =  await this.user_repository.findOneBy({gmail})
+    async findOneByMail(gmail:string) : Promise<User>{
+        const user =  await this.usersRepository.findOneBy({gmail})
         if (!user) {
             throw new NotFoundException(`User with gmail ${gmail} not found`);
         }
         return user;
     }
-    async register(new_user: createUser): Promise<user> {
+    async register(newUser: CreateUser ): Promise<User> {
         try {
+            const user = this.findOneByMail(newUser.gmail)
+            if (user){
             const salt = await bcrypt.genSaltSync()
-            const password_hash = await bcrypt.hash(new_user.password, salt);
-            const create_user: user = this.user_repository.create({...new_user , password:password_hash});
-            return await this.user_repository.save(create_user);
+            const password_hash = await bcrypt.hash(newUser.password, salt);
+            const create_user: User = this.usersRepository.create({...newUser , password:password_hash });
+            return await this.usersRepository.save(create_user);}
+            else {
+                throw new Error("Tài khoản đã được đăng ký")
+            }
         } catch (e) {
             // Xử lý lỗi, ví dụ log lỗi hoặc ném một lỗi cụ thể
             throw new Error(`Failed to register user: ${e.message}`);
         }
     }    
+    async updateToken (id : number , updateUserTokenDto : UpdateUserDto) : Promise<User>{
+        await this.usersRepository.update({ id }, updateUserTokenDto);
+        return await this.usersRepository.findOne({ where: { id } });
+    } 
     delete_user(id:number){
-        this.user_repository.update({id} , {active: false})
+        this.usersRepository.update({id} , {active: false})
     }
 } 

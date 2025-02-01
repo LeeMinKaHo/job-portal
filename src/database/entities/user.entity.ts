@@ -1,16 +1,21 @@
 import { Role } from "src/modules/auth/enum/role.enum";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Company } from "./company.entity";
 
 @Entity("users")
-export class user{
+export class User{
     @PrimaryGeneratedColumn()
     id:number
     @Column()
     gmail:string
     @Column()
     password:string
-    @Column()
+    @Column ({default:true} )
     active:boolean
     @Column()
     role:Role
+    @Column()
+    refresh_token:string
+
+   
 }

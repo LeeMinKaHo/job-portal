@@ -1,7 +1,7 @@
 import { Type } from "class-transformer"
 import { IsDate, IsNegative, IsNotEmpty, IsNumber, IsPositive, IsString } from "class-validator"
 
-export class create_job{
+export class CreateJob{
     @IsString()
     @IsNotEmpty()
     title:string
