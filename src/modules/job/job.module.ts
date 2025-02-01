@@ -1,13 +1,17 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "src/modules/database/database.module";
-import { job_posting_provider } from "./services/job.provider";
-import { jobService } from "./services/job.service";
-import { jobController } from "./controllers/job_posting.controller";
+import { JobService } from "./services/job.service";
+import { jobController } from "./controllers/job.controller";
+import { UserModule } from "../user/user.module";
+import { JwtModule } from "@nestjs/jwt";
+import { CompanyModule } from "../company/company.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Job } from "src/database/entities/job.entity";
 
 @Module({
     controllers:[ jobController ],
-    exports:[...job_posting_provider],
-    imports:[ DatabaseModule],
-    providers:[ ...job_posting_provider , jobService]
+    exports:[JobService],
+    imports:[ TypeOrmModule.forFeature([Job]) , UserModule , JwtModule.register({}) , CompanyModule],
+    providers:[ JobService]
 })
-export class jobModule{}
+export class JobModule{}

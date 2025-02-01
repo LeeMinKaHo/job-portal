@@ -1,52 +1,94 @@
-import { Injectable, Inject, Body } from "@nestjs/common";
-import { job } from "src/database/entities/job.entity";
-import { DeleteResult, Repository } from "typeorm";
-import { create_job} from "../dtos/create_job.dto";
-import { update_job } from "../dtos/update_job.dto";
-
+import { Injectable, Inject, Body } from '@nestjs/common';
+import { Job } from 'src/database/entities/job.entity';
+import { DeleteResult, Repository } from 'typeorm';
+import { CreateJob } from '../dtos/create-job.dto';
+import { UpdateJob } from '../dtos/update-job.dto';
+import { User } from 'src/database/entities/user.entity';
+import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { FillterJobDto } from '../dtos/fillter-job.dto';
+import { Company } from 'src/database/entities/company.entity';
+import { CompanyService } from 'src/modules/company/services/company.service';
+import { CurrentUser } from 'src/modules/auth/decorator/currentUser.decorator';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class jobService {
+export class JobService {
   constructor(
-    @Inject('JOB_POSTING_REPOSITORY')
-    private job_posting_repository: Repository<job>,
+    @InjectRepository(Job)
+    private jobsRepository: Repository<Job>,
+    private companyService : CompanyService
   ) {}
 
-  async findAll(): Promise<job[]> {
-    return await this.job_posting_repository.find();
-  } 
-  async create(createJobPostingDto: create_job): Promise<job> {
-    console.log(createJobPostingDto)
-    const newJobPosting = this.job_posting_repository.create();
+  async findAll(paginationDto: PaginationDto , fillterJobDto : FillterJobDto): Promise<[Job[],number]> {
+    const { offset, limit } = paginationDto;
+    const { title, locationID, fieldID } = fillterJobDto;
+    
+    const query = this.jobsRepository.createQueryBuilder('jobs')
+        .take(limit)
+        .skip(offset)
+        .leftJoinAndSelect("jobs.company","company")
+    
+    // Chỉ thêm điều kiện nếu name có giá trị
+    if (title) {
+        query.where("jobs.title LIKE :title", { title: `%${title}%` });
+    }
+    
+    // Nếu bạn cũng muốn lọc theo locationID và fieldID, bạn có thể thêm các điều kiện tương tự
+    if (locationID) {
+        query.andWhere("jobs.locationID = :locationID", { locationID });
+    }
+    
+    if (fieldID) {
+        query.andWhere("jobs.fieldID = :fieldID", { fieldID });
+    }
+    
+    return query.getManyAndCount();
+  }
+  async create(
+    createJobPostingDto: CreateJob,
+    CurrentUser: User,
+  ): Promise<Job> {
+    const newJobPosting = this.jobsRepository.create();
+    newJobPosting.company_id = CurrentUser.id;
     Object.assign(newJobPosting, createJobPostingDto);
-    await this.job_posting_repository.save(newJobPosting)
+    await this.jobsRepository.save(newJobPosting);
     return newJobPosting;
   }
-  
-  async findOne(id: number): Promise<job | null> {
-    const jobPosting : job = await this.job_posting_repository.findOne({ where: { id: id } });
+
+  async findOne(id: number): Promise<Job | null> {
+    const jobPosting: Job = await this.jobsRepository.findOne({
+      where: { id: id },
+    });
     return jobPosting || null; // Trả về null nếu không tìm thấy
   }
-  
-  async update(update_job_posting_dto: update_job): Promise<job | null> {
+
+  async update(updateJobDto: UpdateJob , currentUser : User): Promise<Job | null> {  
     // Tìm bản ghi với ID được cung cấp
-    const existingJob : job = await this.findOne(update_job_posting_dto.id);
-  
+    const existingJob: Job = await this.findOne(updateJobDto.id);
     if (!existingJob) {
       // Nếu không tìm thấy, trả về null hoặc ném lỗi
-      throw new Error(`Job posting with ID ${update_job_posting_dto.id} not found`);
+      throw new Error(
+        `Job posting with ID ${updateJobDto.id} not found`,
+      );
     }
-  
+    const comapny : Company = await this.companyService.findOneByUserID(currentUser.id)
+    console.log(currentUser.id,comapny , existingJob)
+    if (comapny.id !== existingJob.company_id)
+      throw new Error(
+        `You are not allow to access other job`,
+      );
     // Cập nhật dữ liệu mới vào bản ghi tìm thấy
-    Object.assign(existingJob, update_job_posting_dto);
-  
+    Object.assign(existingJob, updateJobDto);
+
     // Lưu thay đổi
-    return await this.job_posting_repository.save(existingJob);
-  }  
+    return await this.jobsRepository.save(existingJob);
+  }
 
   async delete(id: number): Promise<DeleteResult> {
     // Tìm và xóa bản ghi theo ID
-    const result = await this.job_posting_repository.update(id,{ is_Hidden:true});
+    const result = await this.jobsRepository.update(id, {
+      is_Hidden: true,
+    });
     return result;
   }
 }

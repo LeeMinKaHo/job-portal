@@ -1,7 +1,6 @@
 
 
-import { company } from 'src/database/entities/company.entity';
-import { job } from 'src/database/entities/job.entity';
+
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({

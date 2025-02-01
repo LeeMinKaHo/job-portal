@@ -1,7 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Job } from "./job.entity"
+import { User } from "./user.entity"
 
 @Entity("companies")
-export class company{
+export class Company{
     @PrimaryGeneratedColumn()
     id:number
     @Column()
@@ -16,5 +18,13 @@ export class company{
     location:number
     @Column()
     img_url:string
-    
+    @Column()
+    userId:number
+
+    @OneToMany( () => Job , (job) => job.company)
+    jobs:Job[]
+
+    @OneToOne(() => User)
+    @JoinColumn()
+    user : User
 }

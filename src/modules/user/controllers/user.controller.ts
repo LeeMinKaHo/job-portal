@@ -1,21 +1,22 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import { user_service } from "../services/user.service";
-import { user } from "src/database/entities/user.entity";
-import { createUser } from "../dto/create_user.dto";
+import { UserService } from "../services/user.service";
+import { User } from "src/database/entities/user.entity";
+import { CreateUser } from "../dto/create_user.dto";
+import { Role } from "src/modules/auth/enum/role.enum";
 
 
 @Controller("user")
-export class user_controller{
+export class UserController{
     constructor(
-        private readonly user_service : user_service
+        private readonly userService : UserService
     ){}
     @Get()
-    find_one(@Param() id : number) : Promise<user>{
-       return  this.user_service.find_one_by_id(id)
+    find_one(@Param() id : number) : Promise<User>{
+       return  this.userService.findOneById(id)
     }
     @Post()
-    createUser(@Body() createUserDTO : createUser) : Promise<user>
+    createUser(@Body() createUserDTO : CreateUser ) : Promise<User>
     {
-        return this.user_service.register(createUserDTO)
+        return this.userService.register(createUserDTO )
     }
 }
