@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Application } from './application.entity';
 import { Company } from './company.entity';
+import { Location } from './location.entity';
 
 @Entity("jobs")
 export class Job {
@@ -24,7 +25,8 @@ export class Job {
   gender : boolean
   @Column({type:"int" , nullable:false})
   company_id:number
-
+  @Column({type:"int" , nullable:false})
+  locationId : number
 
   @OneToMany(() => Application ,(application) => application.job)
   applications : Application[]
@@ -32,4 +34,7 @@ export class Job {
   @ManyToOne(() => Company ,(company) => company.jobs)
   @JoinColumn({ name: "company_id" })
   company:Company
+
+  @ManyToOne(() => Location , (location) => location.jobs ) 
+  location:Location
 }

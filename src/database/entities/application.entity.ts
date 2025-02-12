@@ -10,9 +10,9 @@ export class Application {
     cover_letter: string;
 
     @Column({ type: "timestamp", nullable: false, default: () => "CURRENT_TIMESTAMP" })
-    created_at: Date;
+    create_at: Date;
 
-    @Column({ type: "varchar", nullable: true })
+    @Column({ type: "varchar", nullable: true    })
     resume_url: string;
 
     @Column({ type: "varchar", default: "PENDING" })
@@ -25,6 +25,6 @@ export class Application {
     job_id:number
 
     @ManyToOne(() => Job, (job) => job.applications)
-    
+    @JoinColumn({ name: "job_id" })
     job: Job;
 }
