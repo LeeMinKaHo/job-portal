@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   UploadedFile,
   UseGuards,
@@ -29,7 +32,12 @@ export class CompanyController {
   @UseGuards(AuthGuard)
   async create(
     @Body() newCompany: CreateCompanyDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(new ParseFilePipe({
+      validators:[
+        new MaxFileSizeValidator({ maxSize: 300 * 1024 }), // 300 KB
+        new FileTypeValidator({ fileType: /image\/(jpeg|png)/ }),
+      ]
+    })) file: Express.Multer.File,
     @CurrentUser() currentUser : User
   ): Promise<Company> {
     console.log(file)

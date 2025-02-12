@@ -54,10 +54,10 @@ export class jobController {
   @UseGuards(AuthGuard, RolesGuard)
   @Post()
   async create(
-    @Body() create_job_posting_dto: CreateJob,
+    @Body() createJobDto: CreateJob,
     @CurrentUser() current_user: User,
   ): Promise<Job> {
-    return await this.jobsService.create(create_job_posting_dto, current_user);
+    return await this.jobsService.create(createJobDto, current_user);
   }
 
   @Patch()
@@ -101,5 +101,10 @@ export class jobController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  @Get(":id")
+  async findOne(@Param('id') id:number) : Promise<Job>{
+    return await this.jobsService.findOne(id)
   }
 }

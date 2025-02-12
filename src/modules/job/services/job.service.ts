@@ -21,7 +21,7 @@ export class JobService {
 
   async findAll(paginationDto: PaginationDto , fillterJobDto : FillterJobDto): Promise<[Job[],number]> {
     const { offset, limit } = paginationDto;
-    const { title, locationID, fieldID } = fillterJobDto;
+    const { title, locationId, fieldId } = fillterJobDto;
     
     const query = this.jobsRepository.createQueryBuilder('jobs')
         .take(limit)
@@ -34,12 +34,12 @@ export class JobService {
     }
     
     // Nếu bạn cũng muốn lọc theo locationID và fieldID, bạn có thể thêm các điều kiện tương tự
-    if (locationID) {
-        query.andWhere("jobs.locationID = :locationID", { locationID });
+    if (locationId) {
+        query.andWhere("jobs.locationID = :locationID", { locationId });
     }
     
-    if (fieldID) {
-        query.andWhere("jobs.fieldID = :fieldID", { fieldID });
+    if (fieldId) {
+        query.andWhere("jobs.fieldID = :fieldID", { fieldId });
     }
     
     return query.getManyAndCount();
@@ -57,7 +57,8 @@ export class JobService {
 
   async findOne(id: number): Promise<Job | null> {
     const jobPosting: Job = await this.jobsRepository.findOne({
-      where: { id: id },
+      where: {id },
+      relations: ["company"]
     });
     return jobPosting || null; // Trả về null nếu không tìm thấy
   }

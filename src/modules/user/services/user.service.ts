@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from "src/modules/auth/enum/role.enum";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UpdateUserDto } from "../dto/update-user.dto";
+import { plainToInstance } from "class-transformer";
 @Injectable()
 export class UserService {
     constructor(
@@ -18,7 +19,7 @@ export class UserService {
         if (!user) {
             throw new NotFoundException(`User with id ${id} not found`);
         }
-        return user;
+        return plainToInstance(User,user);
     }
     async findOneByMail(gmail:string) : Promise<User>{
         const user =  await this.usersRepository.findOneBy({gmail})

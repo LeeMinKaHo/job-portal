@@ -1,6 +1,3 @@
-
-
-
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
@@ -16,12 +13,5 @@ export const AppDataSource = new DataSource({
     synchronize: false, // Nên đặt `false` trong môi trường production
   });
   
-  export const databaseProviders = [
-    {
-      provide: 'DATA_SOURCE',
-      useFactory: async () => {
-        return AppDataSource.initialize();
-      },
-    },
-  ];
+
 

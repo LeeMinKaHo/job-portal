@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "src/modules/database/database.module";
+
 import { authService } from "./services/auth.service";
 
 import { authController } from "./controllers/auth.controller";
@@ -11,7 +11,7 @@ dotenv.config();
 @Module({
     controllers:[authController ],
     exports:[],
-    imports:[DatabaseModule  ,UserModule, JwtModule.register({})],
+    imports:[UserModule, JwtModule.register({})],
     providers:[ authService ]
 })
 export class authModule{}
